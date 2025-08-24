@@ -1,361 +1,85 @@
 <!DOCTYPE html>
-<html lang="es" class="scroll-smooth">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Análisis Interactivo del Códice Boturini</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Earthy Neutrals -->
-    <!-- Application Structure Plan: The SPA is designed with a thematic, non-linear structure to allow users to explore the essay's core arguments freely. A sticky top navigation bar facilitates jumping between four key sections: 1) A comparative view of the 'Myth vs. Reality' of the journey, 2) An interactive timeline showing the 'Narrative as Power', 3) A visual deconstruction of the 'Symbols of War', and 4) A section on 'Colonial Survival'. This structure breaks down the dense essay into digestible, interactive modules, enhancing user understanding and engagement by transforming a linear argument into an exploratory experience. -->
-    <!-- Visualization & Content Choices: 1) Myth vs. Reality: Goal is to compare narratives. Method is a two-column layout with a JS toggle to switch content, providing a direct and interactive comparison. 2) Narrative as Power: Goal is to visualize the political use of time. Method is a Chart.js bar chart representing the 4x52 year cycles, making an abstract concept concrete. 3) Symbols of War: Goal is to deconstruct the Atl-Tlachinolli. Method uses HTML/CSS hotspots on a central icon, revealing text on hover for an engaging, focused exploration. 4) Colonial Survival: Goal is to show adaptation. Method uses a simple side-by-side grid layout for clear comparison. All visuals are built with HTML/CSS or Chart.js Canvas, avoiding SVG/Mermaid. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <title>El Códice Boturini: Una Narrativa de Poder</title>
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #FDFBF8; /* Warm neutral background */
-            color: #4A4A4A;
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px;
+            background-color: #f8f8f0;
+            color: #333;
         }
-        .nav-link {
-            transition: color 0.3s, border-bottom-color 0.3s;
-            border-bottom: 2px solid transparent;
-        }
-        .nav-link:hover, .nav-link.active {
-            color: #A37E62; /* Subtle accent */
-            border-bottom-color: #A37E62;
-        }
-        .card {
-            background-color: #FFFFFF;
-            border: 1px solid #EAEAEA;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        .symbol-container {
-            width: 150px;
-            height: 150px;
-            border: 2px solid #D1C4B0;
-        }
-        .symbol-hotspot {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background-color: rgba(163, 126, 98, 0.7);
-            border-radius: 50%;
-            cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s;
-        }
-        .symbol-hotspot:hover {
-            transform: scale(1.2);
-            background-color: rgba(163, 126, 98, 1);
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
+        .container {
             max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 250px;
-            max-height: 300px;
+            margin: auto;
+            background: #ffffff;
+            padding: 30px 50px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 300px;
-            }
+        h1 {
+            font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+            font-size: 2.5em;
+            color: #5d4a3e;
+            text-align: center;
+            border-bottom: 2px solid #5d4a3e;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+            font-size: 1.8em;
+            color: #8c7853;
+            margin-top: 30px;
+            border-bottom: 1px dashed #8c7853;
+            padding-bottom: 5px;
+        }
+        p {
+            margin-bottom: 1.5em;
+            text-align: justify;
+        }
+        .intro {
+            font-style: italic;
+            font-size: 1.1em;
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .footnote {
+            font-size: 0.9em;
+            color: #999;
+            margin-top: 40px;
+            text-align: center;
         }
     </style>
 </head>
-<body class="antialiased">
+<body>
 
-    <!-- Header -->
-    <header class="text-center py-12 md:py-20 px-4 bg-white">
-        <div class="max-w-4xl mx-auto">
-            <h1 class="text-4xl md:text-5xl font-bold text-[#A37E62] tracking-tight">El Códice Boturini</h1>
-            <p class="mt-4 text-lg md:text-xl text-gray-600">Una Narración de Poder Más Allá del Mito</p>
-            <p class="mt-6 max-w-3xl mx-auto text-gray-500">
-                Esta aplicación interactiva explora la tesis de que el Códice Boturini no es un simple registro de una peregrinación mítica, sino una sofisticada narrativa política. A través de las siguientes secciones, desglosaremos cómo la élite mexica utilizó la historia como una herramienta para legitimar su poder y asegurar su supervivencia.
-            </p>
-        </div>
-    </header>
+<div class="container">
+    <h1>El Códice Boturini: Una Narrativa de Poder y Supervivencia</h1>
 
-    <!-- Navigation -->
-    <nav class="sticky top-0 bg-[#FDFBF8]/80 backdrop-blur-lg z-10 shadow-sm">
-        <div class="max-w-5xl mx-auto px-4">
-            <div class="flex justify-center items-center h-16 space-x-4 md:space-x-8">
-                <a href="#section-1" class="nav-link text-sm md:text-base font-semibold py-2">Mito vs. Realidad</a>
-                <a href="#section-2" class="nav-link text-sm md:text-base font-semibold py-2">El Relato como Poder</a>
-                <a href="#section-3" class="nav-link text-sm md:text-base font-semibold py-2">Símbolos de Guerra</a>
-                <a href="#section-4" class="nav-link text-sm md:text-base font-semibold py-2">Supervivencia Colonial</a>
-            </div>
-        </div>
-    </nav>
+    <p class="intro">El Códice Boturini, a menudo visto como un simple registro histórico, es en realidad un documento que revela una estrategia de poder y legitimación. Su narrativa va más allá del mito para mostrar la astucia de una élite que moldeó la historia para su propio beneficio.</p>
 
-    <main class="max-w-5xl mx-auto p-4 md:p-8">
-        
-        <!-- Section 1: Myth vs Reality -->
-        <section id="section-1" class="py-16">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-gray-800">Aztlán: ¿Mito o Alegoría Local?</h2>
-                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">Aquí contrastamos la narrativa tradicional de una peregrinación épica desde una isla lejana con la interpretación pragmática de una odisea local dentro del Valle de México. Use el interruptor para explorar ambas perspectivas.</p>
-            </div>
+    <h2>La Reconfiguración del Mito para la Consolidación del Poder</h2>
+    <p>La interpretación tradicional del Códice Boturini presenta la épica peregrinación mexica desde la mítica isla de Aztlán. Sin embargo, un análisis crítico sugiere que esta narrativa es una reelaboración con un propósito político claro. Aztlán, en lugar de ser una isla lejana, se interpreta como una alegoría de una zona lacustre en el Valle de México, rica en humedales y tule.</p>
+    <p>La "peregrinación" no habría sido una huida mística, sino una migración estratégica. La ruptura del árbol de tule, un evento central en el relato, simboliza una división interna, una disputa por recursos que llevó a un grupo a separarse. La élite religiosa que guió a este grupo disidente no eran simples visionarios, sino líderes que se legitimaron a través de una narrativa de predestinación. Las huellas izquierdas que apuntan directamente al islote de Tenochtitlan y la duración del viaje en ciclos de 52 años, números de gran significado, reforzaron la idea de que su ascenso al poder era parte de un plan divino.</p>
 
-            <div class="flex justify-center mb-8">
-                <label for="toggle" class="flex items-center cursor-pointer">
-                    <span class="mr-3 font-semibold text-gray-700">Visión Mítica</span>
-                    <div class="relative">
-                        <input type="checkbox" id="toggle" class="sr-only">
-                        <div class="block bg-gray-300 w-14 h-8 rounded-full"></div>
-                        <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
-                    </div>
-                    <span class="ml-3 font-semibold text-gray-700">Visión Pragmática</span>
-                </label>
-            </div>
+    <h2>De la Justificación Militar a la Supervivencia Colonial</h2>
+    <p>El pragmatismo de la élite mexica se extiende al uso de la simbología. El <strong>Atl-Tlachinolli</strong> ("agua-fuego"), un antiguo símbolo de guerra, se integra en el relato de la fundación. Al representar al águila emitiendo este símbolo, el códice no solo augura un destino, sino que legitima la naturaleza guerrera del pueblo y su derecho a dominar. La historia no solo justifica su origen, sino que glorifica su vocación militar y su superioridad.</p>
+    <p>La elaboración del Códice Boturini después de la Conquista de México revela una segunda capa de pragmatismo: la supervivencia. En un momento de crisis, la élite mexica utilizó su historia para mantener su estatus bajo el nuevo régimen colonial. Al presentar una narrativa de una estirpe gloriosa a los conquistadores, buscaban negociar su posición en la nueva sociedad. El sincretismo cultural, como la aparición de símbolos mexicas en escudos coloniales, demuestra que la Conquista fue una reconfiguración de poder, donde las élites indígenas se esforzaron por conservar sus linajes y prestigio.</p>
 
-            <div class="grid md:grid-cols-2 gap-8 items-start">
-                <div id="narrative-visual" class="p-6 bg-white rounded-lg shadow-sm border border-gray-200 flex items-center justify-center h-80">
-                    <!-- Visual content changes with JS -->
-                </div>
-                <div id="narrative-text" class="prose max-w-none">
-                    <!-- Text content changes with JS -->
-                </div>
-            </div>
-        </section>
-        
-        <hr class="my-12 border-gray-200">
+    <h2>Conclusión: La Historia como Instrumento Político</h2>
+    <p>El Códice Boturini nos enseña que la historia no siempre es un registro objetivo. La narrativa del "orgullo azteca" es, en parte, un legado de una élite que manipuló el pasado para justificar su dominio y asegurar su supervivencia. La historia, en este caso, fue un instrumento político para garantizar la permanencia de quienes la escribieron.</p>
 
-        <!-- Section 2: Narrative as Power -->
-        <section id="section-2" class="py-16">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-gray-800">El Relato como Instrumento de Legitimación</h2>
-                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">La élite mexica enmarcó su ascenso como un destino cósmico. Un elemento clave fue la duración de la peregrinación: cuatro ciclos exactos de 52 años, un número de profundo significado calendárico que sugería un propósito divino y predestinación.</p>
-            </div>
-            <div class="chart-container">
-                <canvas id="timelineChart"></canvas>
-            </div>
-        </section>
+    <div class="footnote">
+        <p>&copy; 2025. Ensayo basado en análisis crítico del Códice Boturini.</p>
+    </div>
 
-        <hr class="my-12 border-gray-200">
+</div>
 
-        <!-- Section 3: Symbols of War -->
-        <section id="section-3" class="py-16">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-gray-800">Símbolos de Guerra y Poder</h2>
-                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">El símbolo del Atl-Tlachinolli (agua-fuego) no era una señal pasiva, sino una declaración de la naturaleza guerrera mexica y su derecho a la conquista. Explore los elementos del símbolo para entender su significado pragmático.</p>
-            </div>
-            <div class="grid md:grid-cols-2 gap-8 items-center">
-                <div class="relative flex justify-center items-center">
-                    <div class="symbol-container relative flex justify-center items-center rounded-lg bg-gray-50">
-                         <div class="text-6xl">🦅</div> <!-- Eagle -->
-                         <div class="absolute text-2xl" style="bottom: 30px;">🌵</div> <!-- Cactus -->
-                        <div id="hotspot-eagle" class="symbol-hotspot" style="top: 20%; left: 45%;"></div>
-                        <div id="hotspot-symbol" class="symbol-hotspot" style="top: 45%; left: 20%;"></div>
-                        <div id="hotspot-cactus" class="symbol-hotspot" style="bottom: 25%; left: 45%;"></div>
-                    </div>
-                </div>
-                <div id="symbol-explanation" class="p-6 bg-white rounded-lg shadow-sm border border-gray-200 min-h-[200px]">
-                    <h3 class="font-bold text-lg text-gray-800 mb-2">Pase el cursor sobre los puntos</h3>
-                    <p class="text-gray-600">Cada elemento del emblema de la fundación de Tenochtitlan tiene un significado que va más allá de lo divino, anclado en una declaración de poder.</p>
-                </div>
-            </div>
-        </section>
-
-        <hr class="my-12 border-gray-200">
-
-        <!-- Section 4: Colonial Survival -->
-        <section id="section-4" class="py-16">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-gray-800">Resiliencia y Supervivencia Colonial</h2>
-                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">El Códice Boturini, elaborado después de la Conquista, fue una estrategia de supervivencia. Al registrar su historia de grandeza, la élite mexica buscaba preservar su estatus y privilegios bajo el nuevo régimen español.</p>
-            </div>
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="card p-6 rounded-lg">
-                    <h3 class="font-bold text-xl mb-2 text-[#A37E62]">Un Mecanismo Político</h3>
-                    <p class="text-gray-600">El códice no era un acto de nostalgia, sino una herramienta para demostrar la legitimidad de su linaje a los conquistadores. Era una forma de decir: "Pertenecemos a una estirpe noble y merecemos un lugar en esta nueva jerarquía".</p>
-                </div>
-                <div class="card p-6 rounded-lg">
-                    <h3 class="font-bold text-xl mb-2 text-[#A37E62]">Sincretismo Cultural</h3>
-                    <p class="text-gray-600">La presencia de símbolos prehispánicos, como el Atl-Tlachinolli, en escudos y arquitectura colonial evidencia una negociación sutil. Las élites indígenas no se sometieron por completo, sino que adaptaron su identidad para conservar su estatus.</p>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-white mt-16 py-8 border-t border-gray-200">
-        <div class="max-w-5xl mx-auto text-center text-gray-500 px-4">
-            <p>Esta aplicación es una interpretación interactiva del ensayo "El Códice Boturini: Una narración de poder más allá del mito".</p>
-            <p class="text-sm mt-2">Diseño y desarrollo con fines educativos.</p>
-        </div>
-    </footer>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // --- Section 1: Myth vs Reality Toggle ---
-            const toggle = document.getElementById('toggle');
-            const narrativeVisual = document.getElementById('narrative-visual');
-            const narrativeText = document.getElementById('narrative-text');
-            const dot = document.querySelector('.dot');
-
-            const mythContent = {
-                visual: `<div class="text-center"><div class="text-5xl mb-4">🏝️</div><h4 class="font-bold text-lg">Aztlán Mítico</h4><p>Un viaje épico desde una isla lejana y sagrada, guiado por la voluntad divina.</p><div class="text-2xl mt-4">... ➡️ ➡️ 🏞️</div></div>`,
-                text: `
-                    <h3 class="font-bold text-xl mb-2 text-gray-800">La Peregrinación Épica</h3>
-                    <p>La narrativa tradicional presenta la migración mexica como un viaje predestinado desde la mítica isla de Aztlán. Guiados por su dios Huitzilopochtli, los mexicas emprenden una larga odisea que culmina con la señal divina del águila sobre el nopal, indicando el lugar para fundar su gran ciudad, México-Tenochtitlan.</p>
-                    <p>Esta visión enfatiza el origen divino y el destino manifiesto del pueblo mexica.</p>
-                `
-            };
-
-            const pragmaticContent = {
-                visual: `<div class="text-center"><div class="text-5xl mb-4">🏞️</div><h4 class="font-bold text-lg">Valle de México</h4><p>Una migración estratégica dentro de una geografía conocida, impulsada por conflictos locales.</p><div class="text-2xl mt-4">📍 ➡️ 📍 ➡️ 🎯</div></div>`,
-                text: `
-                    <h3 class="font-bold text-xl mb-2 text-gray-800">La Odisea Local</h3>
-                    <p>Una lectura pragmática propone que Aztlán es una alegoría de la zona lacustre del sur del Valle de México. La "ruptura del árbol de tule" simboliza un conflicto interno por recursos, que obliga a un grupo a migrar. El viaje no es una huida a ciegas, sino un movimiento estratégico de negociación y aprendizaje con pueblos vecinos, con un destino, el islote, ya conocido por los guías.</p>
-                    <p>Esta visión ancla la historia en una realidad política y geográfica tangible.</p>
-                `
-            };
-
-            function updateNarrative(isPragmatic) {
-                if (isPragmatic) {
-                    narrativeVisual.innerHTML = pragmaticContent.visual;
-                    narrativeText.innerHTML = pragmaticContent.text;
-                    dot.style.transform = 'translateX(100%)';
-                } else {
-                    narrativeVisual.innerHTML = mythContent.visual;
-                    narrativeText.innerHTML = mythContent.text;
-                    dot.style.transform = 'translateX(0)';
-                }
-            }
-
-            toggle.addEventListener('change', () => {
-                updateNarrative(toggle.checked);
-            });
-
-            updateNarrative(false); // Initial state
-
-            // --- Section 2: Timeline Chart ---
-            const ctx = document.getElementById('timelineChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Primer Ciclo', 'Segundo Ciclo', 'Tercer Ciclo', 'Cuarto Ciclo'],
-                    datasets: [{
-                        label: 'Años por Ciclo Calendárico',
-                        data: [52, 52, 52, 52],
-                        backgroundColor: [
-                            'rgba(163, 126, 98, 0.2)',
-                            'rgba(163, 126, 98, 0.4)',
-                            'rgba(163, 126, 98, 0.6)',
-                            'rgba(163, 126, 98, 0.8)',
-                        ],
-                        borderColor: [
-                            'rgba(163, 126, 98, 1)',
-                            'rgba(163, 126, 98, 1)',
-                            'rgba(163, 126, 98, 1)',
-                            'rgba(163, 126, 98, 1)',
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return ` ${context.raw} años. La suma de cuatro ciclos (208 años) refuerza la idea de un destino predestinado.`;
-                                }
-                            }
-                        },
-                        title: {
-                            display: true,
-                            text: 'La Peregrinación en Ciclos de 52 Años'
-                        }
-                    },
-                    scales: {
-                        x: {
-                            display: false,
-                            max: 60
-                        },
-                        y: {
-                             grid: {
-                                display: false
-                             }
-                        }
-                    }
-                }
-            });
-
-            // --- Section 3: Symbol Hotspots ---
-            const symbolExplanation = document.getElementById('symbol-explanation');
-            const hotspots = {
-                'hotspot-eagle': {
-                    title: 'El Águila Guerrera',
-                    text: 'Más que un mensajero divino, el águila representa la naturaleza depredadora y militarista del pueblo mexica, un conquistador que se posa sobre su presa.'
-                },
-                'hotspot-symbol': {
-                    title: 'Atl-Tlachinolli (Agua-Fuego)',
-                    text: 'Este antiguo símbolo de guerra no es una señal pasiva. Su emisión por parte del águila es una declaración explícita del derecho a la conquista y al dominio a través de la fuerza militar.'
-                },
-                'hotspot-cactus': {
-                    title: 'El Nopal en la Roca',
-                    text: 'Representa el territorio conquistado, el lugar tomado por la fuerza. No es un regalo de los dioses, sino el botín de una campaña militar exitosa, el islote estratégico en el lago.'
-                }
-            };
-
-            const defaultExplanation = {
-                title: 'Pase el cursor sobre los puntos',
-                text: 'Cada elemento del emblema de la fundación de Tenochtitlan tiene un significado que va más allá de lo divino, anclado en una declaración de poder.'
-            };
-
-            Object.keys(hotspots).forEach(id => {
-                const hotspot = document.getElementById(id);
-                hotspot.addEventListener('mouseenter', () => {
-                    const content = hotspots[id];
-                    symbolExplanation.innerHTML = `<h3 class="font-bold text-lg text-gray-800 mb-2">${content.title}</h3><p class="text-gray-600">${content.text}</p>`;
-                });
-                hotspot.addEventListener('mouseleave', () => {
-                     symbolExplanation.innerHTML = `<h3 class="font-bold text-lg text-gray-800 mb-2">${defaultExplanation.title}</h3><p class="text-gray-600">${defaultExplanation.text}</p>`;
-                });
-            });
-
-            // --- Active Nav Link Scrolling ---
-            const navLinks = document.querySelectorAll('.nav-link');
-            const sections = document.querySelectorAll('section');
-
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.4
-            };
-
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        navLinks.forEach(link => {
-                            link.classList.remove('active');
-                            if (link.getAttribute('href').substring(1) === entry.target.id) {
-                                link.classList.add('active');
-                            }
-                        });
-                    }
-                });
-            }, observerOptions);
-
-            sections.forEach(section => {
-                observer.observe(section);
-            });
-        });
-    </script>
 </body>
 </html>
